@@ -1,8 +1,19 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { Text, Image, StyleSheet } from "react-native"
 import colors from "../constants/colors";
+import { useNavigation } from "@react-navigation/native";
+import { useEffect } from "react";
 
 const SplashScreen =()=> {
+    const navigation = useNavigation();
+
+    useEffect(()=>{
+        navigation.serTimeout(()=>{
+            navigation.replace('Register')
+        },3000);
+        return ()=> clearTimeout(timer);
+    }, [navigation]);
+
     return(
         <LinearGradient colors={colors.gradientePrimario} style={styles.container}>
             <Text style={styles.text}>Loading...</Text>
