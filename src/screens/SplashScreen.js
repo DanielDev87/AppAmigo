@@ -2,16 +2,17 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Text, Image, StyleSheet } from "react-native"
 import colors from "../constants/colors";
 import { useNavigation } from "@react-navigation/native";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const SplashScreen =()=> {
     const navigation = useNavigation();
+    const timer = useRef(null);
 
     useEffect(()=>{
-        navigation.serTimeout(()=>{
+        timer.current = setTimeout(()=>{
             navigation.replace('Register')
         },3000);
-        return ()=> clearTimeout(timer);
+        return ()=> clearTimeout(timer.current);
     }, [navigation]);
 
     return(
