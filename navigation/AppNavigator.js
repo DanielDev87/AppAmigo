@@ -3,12 +3,15 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useState, createContext, useContext } from "react";
 import { Ionicons } from '@expo/vector-icons';
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../src/services/firebaseConfig";
 import SplashScreen from "../src/screens/SplashScreen";
 import RegisterScreen from "../src/screens/auth/RegisterScreen"
 import LoginScreen from "../src/screens/auth/LoginScreen"
 import SettingsScreen from "../src/screens/SettingsScreen";
 import UserScreen from "../src/screens/UserScreen";
 import HomeScreen from "../src/screens/HomeScreen";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -72,12 +75,25 @@ const AppNavigator = ()=>{
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setUser(user);
+            setIsLoading(false);
+        });
+
+        return unsubscribe;
+    }, []);
+
     const authContextValue = {
         user,
         setUser,
         isLoading,
         setIsLoading
     };
+
+    if (isLoading) {
+        return <SplashScreen />;
+    }
 
     return(
         <AuthContext.Provider value={authContextValue}>
