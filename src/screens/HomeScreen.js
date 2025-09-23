@@ -1,12 +1,15 @@
 import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import colors from '../constants/colors'
+import {useAuth} from '../../navigation/AppNavigator'
 
 const HomeScreen = () => {
+  const {user} = useAuth();
+  const displayName = user?.displayName || (user?.email ? user.email.split('@')[0]: 'Amigo');
   return (
     <View style={styles.container}>
         <Text style={styles.title}>Pantalla del Home</Text>
-        <Text style={styles.subtitle}>¡Bienvenido a AppAmigo!</Text>
+        <Text style={styles.subtitle}>¡Bienvenido, {displayName}! </Text>
     </View>
   )
 }
