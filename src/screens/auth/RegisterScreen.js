@@ -3,6 +3,7 @@ import { StyleSheet, TextInput, TouchableOpacity, View, Text, Alert } from "reac
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from '@expo/vector-icons';
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import colors from "../../constants/colors";
 
 const RegisterScreen = () => {
@@ -29,10 +30,61 @@ const RegisterScreen = () => {
             return;
         }
 
-        // Aquí iría la lógica de registro
-        Alert.alert('Éxito', 'Usuario registrado correctamente', [
-            { text: 'OK', onPress: () => navigation.navigate('Login') }
-        ]);
+        setError('');
+
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            await updateProfile(user, {
+                displayName: name
+            });
+            Alert.alert('Éxito', 'Usuario registrado correctamente', [
+                { text: 'OK', onPress: () => navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Login' }],
+                }) }
+            ]);
+            
+        } catch (error) {
+            onsole.error('=== ERROR DE REGISTRO ===');
+            console.error('Código de error:', error.code);
+            console.error('Mensaje de error:', error.message);
+            console.error('Error completo:', error);
+            console.error('========================');
+
+            let errorMessage = 'Error al registrar usuario';
+
+             switch (error.code) {
+                case 'auth/email-already-in-use':
+                    errorMessage = 'Ya existe una cuenta con este correo electrónico';
+                    break;
+                case 'auth/invalid-email':
+                    errorMessage = 'El formato del correo electrónico no es válido';
+                    break;
+                case 'auth/weak-password':
+                    errorMessage = 'La contraseña es muy débil';
+                    break;
+                case 'auth/operation-not-allowed':
+                    errorMessage = 'El registro no está habilitado en Firebase Console';
+                    break;
+                case 'auth/network-request-failed':
+                    errorMessage = 'Error de conexión. Verifica tu internet y configuración de Firebase';
+                    break;
+                case 'auth/invalid-api-key':
+                    errorMessage = 'API Key de Firebase inválida. Verifica tu configuración';
+                    break;
+                case 'auth/project-not-found':
+                    errorMessage = 'Proyecto de Firebase no encontrado. Verifica tu Project ID';
+                    break;
+                case 'auth/configuration-not-found':
+                    errorMessage = 'Configuración de Firebase no encontrada';
+                    break;
+                default:
+                    errorMessage = `${error.message || 'Error desconocido'} (Código: ${error.code})`;
+            }
+            setError(errorMessage);   
+        }
     };
 
     return (

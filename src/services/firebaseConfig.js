@@ -1,15 +1,17 @@
 import { initializeApp } from "firebase/app";
-
+import { getAuth } from "firebase/auth";
 
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_API_KEY,
-  authDomain: "proyecto-appamigo.firebaseapp.com",
-  projectId: "proyecto-appamigo",
-  storageBucket: "proyecto-appamigo.firebasestorage.app",
-  messagingSenderId: "61577691817",
-  appId: "1:61577691817:web:8f1a17501a0c987ba6dfb8"
+  authDomain: process.env.EXPO_PUBLIC_AUTH_DOMAIN,
+  projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
+  storageBucket: process.env.EXPO_PUBLIC_STORAGE_BUCKET,
+  messagingSenderId: process.env.EXPO_PUBLIC_MESSAGING_SENDER_ID,
+  appId: process.env.EXPO_PUBLIC_APP_ID
 };
 
 
 const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export default app;

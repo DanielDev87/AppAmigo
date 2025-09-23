@@ -3,6 +3,8 @@ import { StyleSheet, TextInput, TouchableOpacity, View, Text, Alert } from "reac
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from '@expo/vector-icons';
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../services/firebaseConfig";
 import colors from "../../constants/colors";
 
 const LoginScreen = () => {
@@ -17,11 +19,47 @@ const LoginScreen = () => {
             return;
         }
 
-        // Aquí iría la lógica de autenticación
-        // Por ahora simulamos un login exitoso
-        Alert.alert('Éxito', 'Inicio de sesión exitoso', [
-            { text: 'OK', onPress: () => navigation.navigate('Main') }
-        ]);
+        setError('');
+
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            Alert.alert('Éxito', 'Inicio de sesión exitoso', [
+                { text: 'OK', onPress: () => navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Main' }],
+                }) }
+            ]);
+
+        } catch (error) {
+            console.error('Error al iniciar sesión:', error);
+            let errorMessage = 'Error al iniciar sesión';
+
+            switch (error.code) {
+                case 'auth/user-not-found':
+                    errorMessage = 'No existe una cuenta con este correo electrónico';
+                    break;
+                case 'auth/wrong-password':
+                        errorMessage = 'Contraseña incorrecta';
+                        break;
+                case 'auth/invalid-email':
+                    errorMessage = 'El formato del correo electrónico no es válido';
+                    break;
+                case 'auth/user-disabled':
+                    errorMessage = 'Esta cuenta ha sido deshabilitada';
+                    break
+                case 'auth/too-many-requests':
+                    errorMessage = 'Demasiados intentos fallidos. Intenta más tarde';
+                    break;
+                case 'auth/network-request-failed':
+                    errorMessage = 'Error de conexión. Verifica tu internet';
+                    break;
+                default:
+                    errorMessage = error.message || 'Error desconocido';
+                    break;
+            }
+            setError('');        
+        } 
     };
 
     return (
