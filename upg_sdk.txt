@@ -1,0 +1,17 @@
+
+
+
+npx expo install --fix
+
+npx expo install expo@54
+
+npx expo-doctor
+
+npx expo install --check
+
+npx expo install --fix
+
+npx expo-doctor
+
+
+rm -rf node_modules bun.lockb && bun install
