@@ -1,17 +1,16 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useState, createContext, useContext } from "react";
-import { Ionicons } from '@expo/vector-icons';
+import { useState, createContext, useContext, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../src/services/firebaseConfig";
+import { Ionicons } from '@expo/vector-icons';
 import SplashScreen from "../src/screens/SplashScreen";
 import RegisterScreen from "../src/screens/auth/RegisterScreen"
 import LoginScreen from "../src/screens/auth/LoginScreen"
 import SettingsScreen from "../src/screens/SettingsScreen";
 import UserScreen from "../src/screens/UserScreen";
 import HomeScreen from "../src/screens/HomeScreen";
-import { onAuthStateChanged } from "firebase/auth";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -97,7 +96,7 @@ const AppNavigator = ()=>{
 
     return(
         <AuthContext.Provider value={authContextValue}>
-            <Stack.Navigator initialRouteName="Splash">
+            <Stack.Navigator initialRouteName={user ? "Main" : "Splash"}>
                 <Stack.Screen name="Splash" component={SplashScreen} options={{headerShown: false}}/>
                 <Stack.Screen name="Register" component={RegisterScreen} options={{headerShown: false}}/>
                 <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}}/>

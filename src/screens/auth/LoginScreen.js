@@ -13,41 +13,42 @@ const LoginScreen = () => {
     const [error, setError] = useState('');
     const navigation = useNavigation();
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         if (!email || !password) {
             setError('Por favor completa todos los campos');
             return;
         }
 
         setError('');
-
+        
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
+            
             Alert.alert('Éxito', 'Inicio de sesión exitoso', [
                 { text: 'OK', onPress: () => navigation.reset({
                     index: 0,
                     routes: [{ name: 'Main' }],
                 }) }
             ]);
-
         } catch (error) {
             console.error('Error al iniciar sesión:', error);
+            
             let errorMessage = 'Error al iniciar sesión';
-
+            
             switch (error.code) {
                 case 'auth/user-not-found':
                     errorMessage = 'No existe una cuenta con este correo electrónico';
                     break;
                 case 'auth/wrong-password':
-                        errorMessage = 'Contraseña incorrecta';
-                        break;
+                    errorMessage = 'Contraseña incorrecta';
+                    break;
                 case 'auth/invalid-email':
                     errorMessage = 'El formato del correo electrónico no es válido';
                     break;
                 case 'auth/user-disabled':
                     errorMessage = 'Esta cuenta ha sido deshabilitada';
-                    break
+                    break;
                 case 'auth/too-many-requests':
                     errorMessage = 'Demasiados intentos fallidos. Intenta más tarde';
                     break;
@@ -56,10 +57,10 @@ const LoginScreen = () => {
                     break;
                 default:
                     errorMessage = error.message || 'Error desconocido';
-                    break;
             }
-            setError('');        
-        } 
+            
+            setError(errorMessage);
+        }
     };
 
     return (

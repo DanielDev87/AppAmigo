@@ -4,6 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "../../services/firebaseConfig";
 import colors from "../../constants/colors";
 
 const RegisterScreen = () => {
@@ -14,7 +15,7 @@ const RegisterScreen = () => {
     const [error, setError] = useState('');
     const navigation = useNavigation();
 
-    const handleRegister = () => {
+    const handleRegister = async () => {
         if (!name || !email || !password || !confirmPassword) {
             setError('Todos los campos son obligatorios');
             return;
@@ -31,31 +32,32 @@ const RegisterScreen = () => {
         }
 
         setError('');
-
+        
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-
+            
+            // Actualizar el perfil del usuario con el nombre
             await updateProfile(user, {
                 displayName: name
             });
+            
             Alert.alert('Éxito', 'Usuario registrado correctamente', [
                 { text: 'OK', onPress: () => navigation.reset({
                     index: 0,
                     routes: [{ name: 'Login' }],
                 }) }
             ]);
-            
         } catch (error) {
-            onsole.error('=== ERROR DE REGISTRO ===');
+            console.error('=== ERROR DE REGISTRO ===');
             console.error('Código de error:', error.code);
             console.error('Mensaje de error:', error.message);
             console.error('Error completo:', error);
             console.error('========================');
-
+            
             let errorMessage = 'Error al registrar usuario';
-
-             switch (error.code) {
+            
+            switch (error.code) {
                 case 'auth/email-already-in-use':
                     errorMessage = 'Ya existe una cuenta con este correo electrónico';
                     break;
@@ -83,7 +85,8 @@ const RegisterScreen = () => {
                 default:
                     errorMessage = `${error.message || 'Error desconocido'} (Código: ${error.code})`;
             }
-            setError(errorMessage);   
+            
+            setError(errorMessage);
         }
     };
 

@@ -5,16 +5,16 @@ import { useAuth } from '../../navigation/AppNavigator'
 
 const UserScreen = ({navigation}) => {
   const {user} = useAuth();
-  const [imageUri, setImageUri]= useState(null) 
-  const defaultImage = //variable de entorno que nos llame a una imagen por defecto
+  const [imageUri, setImageUri] = useState(null) 
+  const defaultImage = 'https://via.placeholder.com/150'; // Imagen por defecto
 
-  useEffect(()=>{
-    if (user && user.{{//cuando la imagen esté configurada}}) {
+  useEffect(() => {
+    if (user && user.photoURL) {
       setImageUri(user.photoURL)
     } else {
       setImageUri(defaultImage)
     }
-  })
+  }, [user, defaultImage])
   return (
     <View style={styles.container}>
         <Text style={styles.title}>Perfil de Usuario</Text>
