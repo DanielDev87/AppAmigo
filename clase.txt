@@ -1,0 +1,2 @@
+para inicio de sesiòn con google: 
+$ npx expo install expo-google-sign-in
