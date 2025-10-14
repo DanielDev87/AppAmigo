@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native'
 import colors from '../constants/colors'
-import { useAuth } from '../../navigation/AppNavigator'
+import { useAuth } from '../../navigation/AuthContext'
 import { pickImage, uploadImageToCloudinary } from '../services/cloudinaryService'
 import ImagePreviewModal from '../components/ImagePreviewModal'
 import { useFocusEffect } from '@react-navigation/native'

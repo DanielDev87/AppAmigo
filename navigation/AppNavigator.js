@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useState, createContext, useContext, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../src/services/firebaseConfig";
 import { Ionicons } from '@expo/vector-icons';
@@ -11,21 +11,12 @@ import LoginScreen from "../src/screens/auth/LoginScreen"
 import SettingsScreen from "../src/screens/SettingsScreen";
 import UserScreen from "../src/screens/UserScreen";
 import HomeScreen from "../src/screens/HomeScreen";
+import { AuthContext,useAuth } from "./AuthContext";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 const ProfileStack = createNativeStackNavigator();
 
-// Contexto de autenticación simple
-const AuthContext = createContext();
-
-export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider');
-    }
-    return context;
-};
 
 const TabNavigator = () =>{
     const {user} = useAuth();
