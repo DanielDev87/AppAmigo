@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useState, createContext, useContext, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../src/services/firebaseConfig";
 import { Ionicons } from '@expo/vector-icons';
@@ -11,21 +11,12 @@ import LoginScreen from "../src/screens/auth/LoginScreen"
 import SettingsScreen from "../src/screens/SettingsScreen";
 import UserScreen from "../src/screens/UserScreen";
 import HomeScreen from "../src/screens/HomeScreen";
+import { AuthContext, useAuth } from "./AuthContext";
+import { Image } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 const ProfileStack = createNativeStackNavigator();
-
-// Contexto de autenticación simple
-const AuthContext = createContext();
-
-export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider');
-    }
-    return context;
-};
 
 const TabNavigator = () =>{
     const {user} = useAuth();
@@ -42,7 +33,22 @@ const TabNavigator = () =>{
                     } else if(route.name === "Settings"){
                         iconName = focused ? 'settings' : 'settings-outline';
                     } else if(route.name === "User"){
-                        iconName = focused ? 'person' : 'person-outline';
+                        if (user?.photoURL) {
+                            return (
+                                <Image
+                                    source={{ uri: user.photoURL }}
+                                    style={{
+                                        width: size,
+                                        height: size,
+                                        borderRadius: size / 2,
+                                        borderWidth: focused ? 2 : 0,
+                                        borderColor: focused ? '#0077B6' : 'transparent',
+                                    }}
+                                />
+                            );
+                        }
+                        // Si no tiene foto, mostrar el icono por defecto
+                        return <Ionicons name={focused ? 'person' : 'person-outline'} size={size} color={color} />;
                     } 
                     
                     return <Ionicons name={iconName} size={size} color={color} />;
@@ -57,7 +63,6 @@ const TabNavigator = () =>{
             <Tab.Screen name ="Settings" component={SettingsScreen} options={{tabBarLabel:'Ajustes'}}/>
         </Tab.Navigator>
     )
-
 }
 
 const AuthNavigator = ()=>{
@@ -96,13 +101,19 @@ const AppNavigator = ()=>{
 
     return(
         <AuthContext.Provider value={authContextValue}>
-            <Stack.Navigator initialRouteName={user ? "Main" : "Splash"}>
-                <Stack.Screen name="Splash" component={SplashScreen} options={{headerShown: false}}/>
-                <Stack.Screen name="Register" component={RegisterScreen} options={{headerShown: false}}/>
-                <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}}/>
-                <Stack.Screen name="Main" component={TabNavigator} options={{headerShown: false}}/>
-            </Stack.Navigator>
-        </AuthContext.Provider>
+        <Stack.Navigator initialRouteName={user ? "Main" : "Splash"}>
+            <Stack.Screen name="Splash" component={SplashScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="Register" component={RegisterScreen} options={{headerShown: false}}/>
+            <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}}/>
+            {/* Cambia la key cada vez que el photoURL cambia */}
+            <Stack.Screen
+                name="Main"
+                options={{headerShown: false}}
+            >
+                {() => <TabNavigator key={user?.photoURL || 'no-photo'} />}
+            </Stack.Screen>
+        </Stack.Navigator>
+    </AuthContext.Provider>
     )
 }
 

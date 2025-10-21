@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import colors from '../constants/colors'
-import {useAuth} from '../../navigation/AppNavigator'
+import {useAuth} from '../../navigation/AuthContext'
 
 const HomeScreen = () => {
   const {user} = useAuth();

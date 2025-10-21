@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native'
 import colors from '../constants/colors'
-import { useAuth } from '../../navigation/AppNavigator'
+import { useAuth } from '../../navigation/AuthContext'
 import { pickImage, uploadImageToCloudinary } from '../services/cloudinaryService'
 import ImagePreviewModal from '../components/ImagePreviewModal'
 import { useFocusEffect } from '@react-navigation/native'
 import { updateUserProfilePhoto, getUserData } from '../services/userService'
+import AcademicForm from '../components/AcademicForm'
+import { ScrollView } from 'react-native-gesture-handler'
 
 const UserScreen = ({navigation}) => {
   const {user} = useAuth();
@@ -15,6 +17,7 @@ const UserScreen = ({navigation}) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
   const defaultImage = 'https://via.placeholder.com/150'; // Imagen por defecto
+  const [showAcademicForm,setShowAcademicForm]= useState(false);
 
   const fetchUserProfile = useCallback(async () => {
     if (user) {
@@ -82,6 +85,7 @@ const UserScreen = ({navigation}) => {
   };
 
   return (
+    <ScrollView style={{flex: 1}} contentContainerStyle={styles.scrollContainer}>
     <View style={styles.container}>
       <Text style={styles.title}>Perfil de Usuario</Text>
       
@@ -116,7 +120,18 @@ const UserScreen = ({navigation}) => {
         onConfirm={handleConfirmUpload}
         onCancel={handleCancelSelection}
       />
+
+      <TouchableOpacity style={styles.academicButton} 
+          onPress={toggleAcademicForm}
+          disabled={loading}>
+            <Text style={styles.academicButtonText}>
+              {showAcademicForm ? 'Ocultar datos': 'Abrir datos'}
+            </Text>
+          </TouchableOpacity>
+
+          {showAcademicForm && <AcademicForm onClose={()=> setShowAcademicForm(false)}/>}
     </View>
+    </ScrollView>
   )
 }
 
