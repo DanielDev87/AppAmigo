@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '../../navigation/AuthContext'
 import sqliteService from '../services/sqliteService';
-import { Alert } from 'react-native';
 import colors from '../constants/colors';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, ScrollView, Alert } from 'react-native';
 

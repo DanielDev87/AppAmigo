@@ -122,7 +122,7 @@ const UserScreen = ({navigation}) => {
       />
 
       <TouchableOpacity style={styles.academicButton} 
-          onPress={toggleAcademicForm}
+          onPress={() => setShowAcademicForm(!showAcademicForm)}
           disabled={loading}>
             <Text style={styles.academicButtonText}>
               {showAcademicForm ? 'Ocultar datos': 'Abrir datos'}
