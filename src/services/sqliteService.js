@@ -15,7 +15,7 @@ const init = ()=>{
     );
 };
 
-const upsertAcademic = (id, {direccion = null, correo = null, programa = null, otros = null}={})=>{
+const upsertAcademic = (id, {direccion = null, correo = null, facultad = null,programa = null, otros = null}={})=>{
     const result = db.runSync(
        `INSERT OR REPLACE INTO user_academic (id, direccion, correo, facultad, programa, otros)
        VALUES (?,?,?,?,?,?);`,

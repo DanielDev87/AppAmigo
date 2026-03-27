@@ -8,6 +8,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { updateUserProfilePhoto, getUserData } from '../services/userService'
 import AcademicForm from '../components/AcademicForm'
 import { ScrollView } from 'react-native-gesture-handler'
+import { Ionicons } from '@expo/vector-icons'
 
 const UserScreen = ({navigation}) => {
   const {user} = useAuth();
@@ -121,13 +122,21 @@ const UserScreen = ({navigation}) => {
         onCancel={handleCancelSelection}
       />
 
-      <TouchableOpacity style={styles.academicButton} 
-          onPress={() => setShowAcademicForm(!showAcademicForm)}
-          disabled={loading}>
-            <Text style={styles.academicButtonText}>
-              {showAcademicForm ? 'Ocultar datos': 'Abrir datos'}
-            </Text>
-          </TouchableOpacity>
+      <TouchableOpacity 
+  style={[styles.academicButton, showAcademicForm && styles.academicButtonActive]} 
+  onPress={() => setShowAcademicForm(!showAcademicForm)}
+  disabled={loading}
+  activeOpacity={0.8}
+>
+  <Ionicons 
+    name={showAcademicForm ? 'chevron-up' : 'chevron-down'} 
+    size={20} 
+    color="#fff" 
+  />
+  <Text style={styles.academicButtonText}>
+    {showAcademicForm ? 'OCULTAR DATOS ACADÉMICOS' : 'VER DATOS ACADÉMICOS'}
+  </Text>
+</TouchableOpacity>
 
           {showAcademicForm && <AcademicForm onClose={()=> setShowAcademicForm(false)}/>}
     </View>
@@ -197,6 +206,49 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.subtle,
   },
+  academicButton: {
+  backgroundColor: colors.principal,
+  paddingHorizontal: 20,
+  paddingVertical: 14,
+  borderRadius: 12,
+  marginTop: 20,
+  marginBottom: 10,
+  shadowColor: '#000',
+  shadowOffset: {
+    width: 0,
+    height: 2,
+  },
+  shadowOpacity: 0.1,
+  shadowRadius: 3.84,
+  elevation: 5,
+},
+
+academicButtonActive: {
+  backgroundColor: colors.default, 
+  borderBottomLeftRadius: 0,
+  borderBottomRightRadius: 0,
+},
+
+academicButtonText: {
+  color: '#fff',
+  fontWeight: '600',
+  fontSize: 16,
+  textAlign: 'center',
+  letterSpacing: 0.5,
+},
+
+buttonContent: {
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+  gap: 10,
+},
+
+buttonIcon: {
+  color: '#fff',
+  fontSize: 16,
+  fontWeight: 'bold',
+},
 })
 
 export default UserScreen
