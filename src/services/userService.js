@@ -43,8 +43,21 @@ export const getUserData = async (userId) => {
       return userSnap.data();
     } else {
       console.warn(`No se encontró un documento para el usuario con ID: ${userId}`);
-      return null;
+      
+      // Crear nuevo documento
+      const userData = {
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        photoURL: auth.currentUser?.photoURL || null,
+        email: auth.currentUser?.email || '',
+        displayName: auth.currentUser?.displayName || ''
+      };
+      
+      await setDoc(userRef, userData);
+      console.log('Documento de usuario creado exitosamente');
+      return userData;
     }
+    
   } catch (error) {
     console.error('Error getting user data:', error);
     throw error;
